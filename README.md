@@ -9,28 +9,31 @@ Installation
 Wordpress
 ---------
 
-1.  Copy wrlog.php to your wordpress root directory
-2.  Add this lines to wp-load.php file, just before including wp-config.php
+Copy wrlog.php to your wordpress root directory
 
- > // Write debug log library - START
- > date_default_timezone_set('Europe/Madrid');
- > if ( file_exists( ABSPATH . 'wrlog.php') ) {
- >    require_once( ABSPATH . 'wrlog.php' );
- > }
- > wrlog::$enabled = true;
- > wrlog::$path = ABSPATH . 'wp-content/logs';
- > wrlog_request();
- > // Write debug log library - END
+Add this lines to wp-load.php file, just before including wp-config.php
 
-3.  Create a folder 'logs' in wp-content
-4.  Use wrlog procedure functions or create wrlog objects
+	// Write debug log library - START
+    date_default_timezone_set('Europe/Madrid');
+    if ( file_exists( ABSPATH . 'wrlog.php') ) {
+       require_once( ABSPATH . 'wrlog.php' );
+    }
+    wrlog::$enabled = true;
+    wrlog::$path = ABSPATH . 'wp-content/logs';
+    wrlog_request();
+    // Write debug log library - END
+
+Create a folder 'logs' in wp-content
+
+Use wrlog procedure functions or create wrlog objects
 
 
 Moodle
 ------
 
-1.  Copy wrlog.php to your moodle source directory
-2.  Add this lines to config.php file, just before including lib/setup.php
+Copy wrlog.php to your moodle source directory
+
+Add this lines to config.php file, just before including lib/setup.php
 
     // Write debug log library - START
 	require_once(dirname(__FILE__) . '/wrlog.php');
@@ -39,8 +42,9 @@ Moodle
 	wrlog_request();
     // Write debug log library - END
 
-3.  Create a folder 'logs' in moodle data directory
-4.  Use wrlog procedure functions or create wrlog objects
+Create a folder 'logs' in moodle data directory
+
+Use wrlog procedure functions or create wrlog objects
 
 
 
@@ -53,15 +57,15 @@ Controller or Model
 In order to debug code in a controller or a model we wouldn't use echo to output, because no output has been sent yet to browser.
 So, in this cases, log is the best solution because you are sure that every message is there in the right order.
 
-1.  Log a message : wrlog($msg, $return = false, $out = false)
+Log a message : wrlog($msg, $return = false, $out = false)
 
 	wrlog('Hello World!');
 
-2.  Log a variable as a JSON human readable syntax : wrlog_json($msg, $var, $return = false, $out = false)
+Log a variable as a JSON human readable syntax : wrlog_json($msg, $var, $return = false, $out = false)
 
     wrlog('Flowers : ', $flowers);
 
-3.  Log call stack : wrlog_btrace($trace = null, $return = false, $out = false)
+Log call stack : wrlog_btrace($trace = null, $return = false, $out = false)
 
     wrlog_btrace();
 
@@ -71,15 +75,15 @@ View
 When we are debugging in view, we have already sent output to browser.
 So, if we want to show a preformatted message we have to use wrout functions family
 
-1.  Show a preformatted message : wrout($msg)
+Show a preformatted message : wrout($msg)
 
 	wrout('Hello world!');
 
-2.  Show a variable as a JSON human readable syntax : wrout_json($msg, $var)
+Show a variable as a JSON human readable syntax : wrout_json($msg, $var)
 
-    wrlog('Flowers : ', $flowers);
+    wrout('Flowers : ', $flowers);
 
-3.  Show call stack : wrout_btrace($trace = null)
+Show call stack : wrout_btrace($trace = null)
 
     wrout_btrace();
 
