@@ -150,7 +150,7 @@ class wrlog {
      * Write a variable as JSON to log file, output or just return
      *
      * @param  string  $msg
-     * @param  string  $var
+     * @param  mixed   $var
      * @param  boolean $return
      * @param  boolean $out
      * @return mixed
@@ -371,13 +371,14 @@ class wrlog {
      * Static call to $global->json
      *
      * @param  string  $msg
+     * @param  mixed   $var
      * @param  boolean $return
      * @param  boolean $out
      * @return mixed
      */
-    static public function sjson($msg, $json, $return = false, $out = false) {
+    static public function sjson($msg, $var, $return = false, $out = false) {
         if (empty(self::$global)) self::$global = new wrlog('global-log');
-        return self::$global->json($msg, $json, $return, $out);
+        return self::$global->json($msg, $var, $return, $out);
     }
 
     /**
@@ -445,13 +446,13 @@ function wrout($msg) {
  * Procedimental call to static wrlog::sjson
  *
  * @param  string  $msg
- * @param  string  $json
+ * @param  mixed   $var
  * @param  boolean $return
  * @param  boolean $out
  * @return mixed
  */
-function wrlog_json($msg, $json, $return = false, $out = false) {
-    return wrlog::sjson($msg, $json, $return, $out);
+function wrlog_json($msg, $var, $return = false, $out = false) {
+    return wrlog::sjson($msg, $var, $return, $out);
 }
 
 /**
@@ -459,11 +460,11 @@ function wrlog_json($msg, $json, $return = false, $out = false) {
  * without return and echo to output
  *
  * @param  string  $msg
- * @param  string  $json
+ * @param  mixed   $var
  * @return boolean
  */
-function wrout_json($msg, $json) {
-    return wrlog::sjson($msg, $json, false, true);
+function wrout_json($msg, $var) {
+    return wrlog::sjson($msg, $var, false, true);
 }
 
 /**
