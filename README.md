@@ -36,10 +36,10 @@ Copy wrlog.php to your moodle source directory
 Add this lines to config.php file, just before including lib/setup.php
 
     // Write debug log library - START
-	require_once(dirname(__FILE__) . '/wrlog.php');
-	wrlog::$enabled = true;
-	wrlog::$path = $CFG->dataroot . '/logs';
-	wrlog_request();
+    require_once(dirname(__FILE__) . '/wrlog.php');
+    wrlog::$enabled = true;
+    wrlog::$path = $CFG->dataroot . '/logs';
+    wrlog_request();
     // Write debug log library - END
 
 Create a folder 'logs' in moodle data directory
@@ -59,11 +59,11 @@ So, in this cases, log is the best solution because you are sure that every mess
 
 Log a message : wrlog($msg, $return = false, $out = false)
 
-	wrlog('Hello World!');
+    wrlog('Hello World!');
 
 Log a variable as a JSON human readable syntax : wrlog_json($msg, $var, $return = false, $out = false)
 
-    wrlog('Flowers : ', $flowers);
+    wrlog_json('Flowers : ', $flowers);
 
 Log call stack : wrlog_btrace($trace = null, $return = false, $out = false)
 
@@ -77,11 +77,11 @@ So, if we want to show a preformatted message we have to use wrout functions fam
 
 Show a preformatted message : wrout($msg)
 
-	wrout('Hello world!');
+    wrout('Hello world!');
 
 Show a variable as a JSON human readable syntax : wrout_json($msg, $var)
 
-    wrout('Flowers : ', $flowers);
+    wrout_json('Flowers : ', $flowers);
 
 Show call stack : wrout_btrace($trace = null)
 
