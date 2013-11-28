@@ -111,12 +111,15 @@ class wrlog {
             (self::$enabled && self::$path) ) {
 
             if (! $return && ! $out) {
+                if (!is_dir(self::$path)) {
+                    @mkdir(self::$path, self::DIR_WRITE_MODE, true);
+                }
                 $filepath = self::$path . '/' . $this->prefix . '-' . date('Y-m-d') . '.' . self::$extension;
             }
             $message  = '';
 
             if (! $return && ! $out &&
-                ! $fp = fopen($filepath, self::FOPEN_WRITE_CREATE)) {
+                ! $fp = @fopen($filepath, self::FOPEN_WRITE_CREATE)) {
                 return false;
             }
 
