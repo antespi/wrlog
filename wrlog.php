@@ -137,7 +137,7 @@ class wrlog {
 
             } else if (! $return) {
                 if (self::is_cli()) {
-                    echo $message . "\n";
+                    echo $message;
                 } else {
                     echo '<pre>' . $message . '</pre>';
                 }
