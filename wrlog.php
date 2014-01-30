@@ -136,7 +136,11 @@ class wrlog {
                 return true;
 
             } else if (! $return) {
-                echo '<pre>' . $message . '</pre>';
+                if (self::is_cli()) {
+                    echo $message . "\n";
+                } else {
+                    echo '<pre>' . $message . '</pre>';
+                }
 
                 return true;
 
@@ -209,17 +213,30 @@ class wrlog {
      * @return mixed
      */
     public function request($extras = array(), $return = false, $out = false) {
-        if (!empty($_SERVER['REQUEST_METHOD'])) {
-            $method = $_SERVER['REQUEST_METHOD'];
-            if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                $method .= "-AJAX";
-            }
-            $msg = '------------------------ : [' . $method . '] ' . $_SERVER['REQUEST_URI'];
-            if (!empty($extras['cookie'])) $msg .= "\n   - Cookie : " . var_export($_COOKIE, true);
-            if (!empty($extras['get']))    $msg .= "\n   - GET    : " . var_export($_GET, true);
-            if (!empty($extras['post']))   $msg .= "\n   - POST   : " . var_export($_POST, true);
+        // Command line
+        if (self::is_cli()) {
+            global $argv;
+            $arguments = $argv;
+            $command = array_shift($arguments);
+            $msg = '------------------------ : [CLI] ' . var_export($command, true);
+            if (!empty($extras['args'])) $msg .= "\n   - Arguments : " . var_export($arguments, true);
 
             return $this->write($msg, $return, $out);
+
+        // Web
+        } else {
+            if (!empty($_SERVER['REQUEST_METHOD'])) {
+                $method = $_SERVER['REQUEST_METHOD'];
+                if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                    $method .= "-AJAX";
+                }
+                $msg = '------------------------ : [' . $method . '] ' . $_SERVER['REQUEST_URI'];
+                if (!empty($extras['cookie'])) $msg .= "\n   - Cookie : " . var_export($_COOKIE, true);
+                if (!empty($extras['get']))    $msg .= "\n   - GET    : " . var_export($_GET, true);
+                if (!empty($extras['post']))   $msg .= "\n   - POST   : " . var_export($_POST, true);
+
+                return $this->write($msg, $return, $out);
+            }
         }
 
         return false;
@@ -265,27 +282,35 @@ class wrlog {
      * @return string
      */
     static private function ip_address_read() {
-        if (self::$ip !== false) self::$ip;
+        if (self::$ip !== false) return self::$ip;
 
-        $ippublic = '0.0.0.0';
+        // Command line, no IP
+        if (self::is_cli()) {
+            self::$ip = '[cli/' . getmypid() . ']';;
 
-        $xforwarded_for = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : false;
-        $xforwarded     = (isset($_SERVER['HTTP_X_FORWARDED'])) ?     $_SERVER['HTTP_X_FORWARDED'] : false;
-        $forwarded_for  = (isset($_SERVER['HTTP_FORWARDED_FOR'])) ?   $_SERVER['HTTP_FORWARDED_FOR'] : false;
-        $http_client_ip = (isset($_SERVER['HTTP_CLIENT_IP'])) ?       $_SERVER['HTTP_CLIENT_IP'] : false;
-        $http_via       = (isset($_SERVER['HTTP_VIA'])) ?             $_SERVER['HTTP_VIA'] : false;
-        $remote_addr    = (isset($_SERVER['REMOTE_ADDR'])) ?          $_SERVER['REMOTE_ADDR'] : false;
-        $apache_addr    = (isset($HTTP_SERVER_VARS['REMOTE_ADDR'])) ? $HTTP_SERVER_VARS['REMOTE_ADDR'] : false;
+        // Web
+        } else {
+            $ippublic = '0.0.0.0';
 
-             if (self::ipv4_is_valid($xforwarded_for)) $ippublic = $xforwarded_for;
-        else if (self::ipv4_is_valid($xforwarded))     $ippublic = $xforwarded;
-        else if (self::ipv4_is_valid($forwarded_for))  $ippublic = $forwarded_for;
-        else if (self::ipv4_is_valid($http_client_ip)) $ippublic = $http_client_ip;
-        else if (self::ipv4_is_valid($http_via))       $ippublic = $http_via;
-        else if (self::ipv4_is_valid($remote_addr))    $ippublic = $remote_addr;
-        else if (self::ipv4_is_valid($apache_addr))    $ippublic = $apache_addr;
+            $xforwarded_for = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : false;
+            $xforwarded     = (isset($_SERVER['HTTP_X_FORWARDED'])) ?     $_SERVER['HTTP_X_FORWARDED'] : false;
+            $forwarded_for  = (isset($_SERVER['HTTP_FORWARDED_FOR'])) ?   $_SERVER['HTTP_FORWARDED_FOR'] : false;
+            $http_client_ip = (isset($_SERVER['HTTP_CLIENT_IP'])) ?       $_SERVER['HTTP_CLIENT_IP'] : false;
+            $http_via       = (isset($_SERVER['HTTP_VIA'])) ?             $_SERVER['HTTP_VIA'] : false;
+            $remote_addr    = (isset($_SERVER['REMOTE_ADDR'])) ?          $_SERVER['REMOTE_ADDR'] : false;
+            $apache_addr    = (isset($HTTP_SERVER_VARS['REMOTE_ADDR'])) ? $HTTP_SERVER_VARS['REMOTE_ADDR'] : false;
 
-        self::$ip = '[' . $ippublic . '/' . getmypid() . ']';
+                 if (self::ipv4_is_valid($xforwarded_for)) $ippublic = $xforwarded_for;
+            else if (self::ipv4_is_valid($xforwarded))     $ippublic = $xforwarded;
+            else if (self::ipv4_is_valid($forwarded_for))  $ippublic = $forwarded_for;
+            else if (self::ipv4_is_valid($http_client_ip)) $ippublic = $http_client_ip;
+            else if (self::ipv4_is_valid($http_via))       $ippublic = $http_via;
+            else if (self::ipv4_is_valid($remote_addr))    $ippublic = $remote_addr;
+            else if (self::ipv4_is_valid($apache_addr))    $ippublic = $apache_addr;
+
+            self::$ip = '[' . $ippublic . '/' . getmypid() . ']';
+        }
+
         return self::$ip;
     }
 
@@ -333,6 +358,15 @@ class wrlog {
         }
 
         return $result;
+    }
+
+    /**
+     * Return if this script is executing from command line, not webserver
+     *
+     * @return bool
+     */
+    static private function is_cli() {
+        return (php_sapi_name() == 'cli');
     }
 
     /**
