@@ -377,8 +377,9 @@ class wrlog {
     private function time() {
         $time = microtime(true) - $this->timestart;
         $time = round($time, 3);
+        $stime = sprintf('%.3f', $time);
 
-        return date('Y/m/d-H:i:s') . '(' . $time . ')';
+        return date('Y/m/d-H:i:s') . '(' . $stime . ')';
     }
 
     /**
