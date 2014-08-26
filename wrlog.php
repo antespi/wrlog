@@ -227,13 +227,22 @@ class wrlog {
         } else {
             if (!empty($_SERVER['REQUEST_METHOD'])) {
                 $method = $_SERVER['REQUEST_METHOD'];
+
+                $extras['auto'] = isset($extras['auto']) ? $extras['auto'] : true;
+                // $showcookie  = ( !empty($extras['cookie']) || ($extras['auto'] && !empty($_COOKIE)) ); 
+                $showcookie  = ( !empty($extras['cookie'])                                          ); 
+                $showget     = ( !empty($extras['get'])    || ($extras['auto'] && !empty($_GET))    ); 
+                $showpost    = ( !empty($extras['post'])   || ($extras['auto'] && !empty($_POST))   ); 
+                $showfile    = ( !empty($extras['file'])   || ($extras['auto'] && !empty($_FILE))   ); 
+
                 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
                     $method .= "-AJAX";
                 }
                 $msg = '------------------------ : [' . $method . '] ' . $_SERVER['REQUEST_URI'];
-                if (!empty($extras['cookie'])) $msg .= "\n   - Cookie : " . var_export($_COOKIE, true);
-                if (!empty($extras['get']))    $msg .= "\n   - GET    : " . var_export($_GET, true);
-                if (!empty($extras['post']))   $msg .= "\n   - POST   : " . var_export($_POST, true);
+                if ($showcookie) $msg .= "\n   - Cookie : " . var_export($_COOKIE, true);
+                if ($showget)    $msg .= "\n   - GET    : " . var_export($_GET, true);
+                if ($showpost)   $msg .= "\n   - POST   : " . var_export($_POST, true);
+                if ($showfile)   $msg .= "\n   - FILE   : " . var_export($_FILE, true);
 
                 return $this->write($msg, $return, $out);
             }
