@@ -229,11 +229,11 @@ class wrlog {
                 $method = $_SERVER['REQUEST_METHOD'];
 
                 $extras['auto'] = isset($extras['auto']) ? $extras['auto'] : true;
-                // $showcookie  = ( !empty($extras['cookie']) || ($extras['auto'] && !empty($_COOKIE)) ); 
-                $showcookie  = ( !empty($extras['cookie'])                                          ); 
-                $showget     = ( !empty($extras['get'])    || ($extras['auto'] && !empty($_GET))    ); 
-                $showpost    = ( !empty($extras['post'])   || ($extras['auto'] && !empty($_POST))   ); 
-                $showfile    = ( !empty($extras['file'])   || ($extras['auto'] && !empty($_FILE))   ); 
+                // $showcookie  = ( !empty($extras['cookie']) || ($extras['auto'] && !empty($_COOKIE)) );
+                $showcookie  = ( !empty($extras['cookie'])                                          );
+                $showget     = ( !empty($extras['get'])    || ($extras['auto'] && !empty($_GET))    );
+                $showpost    = ( !empty($extras['post'])   || ($extras['auto'] && !empty($_POST))   );
+                $showfile    = ( !empty($extras['file'])   || ($extras['auto'] && !empty($_FILE))   );
 
                 if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
                     $method .= "-AJAX";
@@ -338,7 +338,7 @@ class wrlog {
 
         for ($i = 0; $i < strlen($json); $i++) {
             $character = $json[$i];
-            if ( ($character == '"') &&
+            if ( ($character == '"') && ($i > 0) &&
                  ($json[$i - 1] != '\\') ) $quotes = !$quotes;
             if ($quotes) {
                 $result .= $character;
